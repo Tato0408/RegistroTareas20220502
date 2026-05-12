@@ -1,19 +1,8 @@
-import HomeworkRow from './HomeworkRow';
-import { useAuth } from '../../contexts/AuthContext';
-import { useHomework } from '../../contexts/HomeworkContext';
+import TaskRow from './TaskRow';
+import { useTask } from '../../contexts/TaskContext';
 
-export function HomeworkTable({ homeworks = [], onEditRow }) { 
-  const { user: currentUser } = useAuth();
-  const { deleteHomework } = useHomework();
-
-  const filteredHomework = homeworks?.filter(data => {
-    if (!currentUser) return true;
-
-    const isMe = homeworks._id === (currentUser._id || currentUser.id) || 
-                 homeworks.email === currentUser.email;
-
-    return !isMe;
-  });
+export function TaskTable({ tasks = [], onEditRow }) {
+  const { deleteTask } = useTask();
 
   return (
     <div className="bg-white shadow-md rounded-xl border border-slate-200 overflow-hidden">
@@ -29,20 +18,20 @@ export function HomeworkTable({ homeworks = [], onEditRow }) {
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">
-          {filteredHomework?.map((data) => (
-            <HomeWorkRow 
-              key={data._id} 
-              student={data} 
-              onEdit={onEditRow} 
-              onDelete={() => deleteUser(data._id)} 
+          {tasks.map((data) => (
+            <TaskRow
+              key={data._id}
+              data={data}           // ← prop unificado como "data"
+              onEdit={onEditRow}
+              onDelete={() => deleteTask(data._id)}
             />
           ))}
         </tbody>
       </table>
-      
-      {filteredHomework.length === 0 && (
+
+      {tasks.length === 0 && (
         <div className="p-8 text-center text-slate-400 italic">
-          No hay otras tareas ingresadas.
+          No hay tareas registradas.
         </div>
       )}
     </div>

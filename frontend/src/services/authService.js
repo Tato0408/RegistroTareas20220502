@@ -1,15 +1,15 @@
 import { APIURL as API_URL } from "../utils/api_url";
 
 export async function login(email, password) {
-    const response = await fetch(`${API_URL}loginEmployee`, { // Ajusta la ruta si es /api/customers/login
+    const response = await fetch(`${API_URL}loginUser`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
-        credentials: "include" // ¡CRUCIAL para que el navegador guarde la cookie!
+        credentials: "include"
     });
-
     const data = await response.json();
     if (!response.ok) throw new Error(data.message || "Error en el login");
+    alert("login exitoso")
     return data;
 }
 
@@ -21,44 +21,30 @@ export async function logout() {
     return await response.json();
 }
 
-
-export async function startRegistration(userData) {
-    const response = await fetch(`${API_URL}registerEmployee`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
-        credentials: "include" 
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message);
-    return data;
-}
-
-export async function verifyRegistrationCode(code) {
-    const response = await fetch(`${API_URL}registerEmployee/verifyCodeEmail`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ verificationCodeRequest: code }),
+export async function getMe() {
+    const response = await fetch(`${API_URL}me`, {
+        method: 'GET',
         credentials: "include"
     });
     const data = await response.json();
-    if (!response.ok) throw new Error(data.message);
+    if (!response.ok) throw new Error(data.message || "Sin sesión activa");
     return data;
 }
+
 export async function requestCode(email) {
-    const response = await fetch(`${API_URL}recoveryPasswordEmployee/requestCode`, {
+    const response = await fetch(`${API_URL}recoveryPassword/requestCode`, { // ← corregido
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
         credentials: "include"
     });
     const data = await response.json();
-    if (!response.ok) throw new Error("Usuario no existe " + data.message);
+    if (!response.ok) throw new Error(data.message || "Usuario no encontrado");
     return data;
 }
 
 export async function verifyCode(code) {
-    const response = await fetch(`${API_URL}recoveryPasswordEmployee/verifyCode`, {
+    const response = await fetch(`${API_URL}recoveryPassword/verifyCode`, { // ← corregido
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code }),
@@ -70,7 +56,7 @@ export async function verifyCode(code) {
 }
 
 export async function updatePassword(newPassword, confirmedPassword) {
-    const response = await fetch(`${API_URL}recoveryPasswordEmployee/newPassword`, {
+    const response = await fetch(`${API_URL}recoveryPassword/newPassword`, { // ← corregido
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ newPassword, confirmedPassword }),

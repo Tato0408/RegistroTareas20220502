@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import * as AuthService from '../services/authService';
 import { useNavigate } from 'react-router-dom';
-import { X, Mail, ShieldCheck, Lock } from 'lucide-react'; // Asegúrate de tener lucide-react instalado
-import {useAuth } from '../contexts/AuthContext'
+import { X, Mail, ShieldCheck, Lock } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext'; // ← ya estaba, ahora sí se usa
 
 function RecoveryModal({ isOpen, onClose }) {
-  const [step, setStep] = useState(1); // 1: Email, 2: Código, 3: Nueva Pass
+  const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
@@ -16,21 +16,20 @@ function RecoveryModal({ isOpen, onClose }) {
   const handleProcess = async (e) => {
     e.preventDefault();
     setLoading(true);
-    //Quitar los comentarios de los await cuando funcione
     try {
       if (step === 1) {
-       // await AuthService.requestCode(email);
+        await AuthService.requestCode(email); // ← descomentado
         alert("Código enviado al correo.");
         setStep(2);
       } else if (step === 2) {
-        //await AuthService.verifyCode(code);
+        await AuthService.verifyCode(code); // ← descomentado
         setStep(3);
       } else {
         if (newPassword !== confirmPassword) throw new Error("Las contraseñas no coinciden");
-        //await AuthService.updatePassword(newPassword, confirmPassword);
+        await AuthService.updatePassword(newPassword, confirmPassword); // ← descomentado
         alert("Contraseña actualizada exitosamente.");
         onClose();
-        setStep(1); 
+        setStep(1);
       }
     } catch (err) {
       alert(err.message);
@@ -55,12 +54,12 @@ function RecoveryModal({ isOpen, onClose }) {
                 </div>
                 <h2 className="text-2xl font-bold">Recuperar cuenta</h2>
                 <p className="text-sm text-slate-500">Escribe tu correo para buscar tu usuario.</p>
-                <input 
-                  type="email" 
-                  placeholder="ejemplo@correo.com" 
+                <input
+                  type="email"
+                  placeholder="ejemplo@correo.com"
                   className="w-full p-3 bg-slate-50 border rounded-xl outline-none focus:border-blue-500"
                   onChange={e => setEmail(e.target.value)}
-                  required 
+                  required
                 />
               </div>
             )}
@@ -72,12 +71,12 @@ function RecoveryModal({ isOpen, onClose }) {
                 </div>
                 <h2 className="text-2xl font-bold">Verifica el código</h2>
                 <p className="text-sm text-slate-500">Ingresa el código que recibiste en <b>{email}</b></p>
-                <input 
-                  type="text" 
-                  placeholder="Código" 
+                <input
+                  type="text"
+                  placeholder="Código"
                   className="w-full p-3 text-center text-xl font-mono border rounded-xl"
                   onChange={e => setCode(e.target.value)}
-                  required 
+                  required
                 />
               </div>
             )}
@@ -88,25 +87,25 @@ function RecoveryModal({ isOpen, onClose }) {
                   <Lock size={32} />
                 </div>
                 <h2 className="text-2xl font-bold">Nueva Contraseña</h2>
-                <input 
-                  type="password" 
-                  placeholder="Contraseña nueva" 
+                <input
+                  type="password"
+                  placeholder="Contraseña nueva"
                   className="w-full p-3 bg-slate-50 border rounded-xl"
                   onChange={e => setNewPassword(e.target.value)}
-                  required 
+                  required
                 />
-                <input 
-                  type="password" 
-                  placeholder="Confirmar contraseña" 
+                <input
+                  type="password"
+                  placeholder="Confirmar contraseña"
                   className="w-full p-3 bg-slate-50 border rounded-xl"
                   onChange={e => setConfirmPassword(e.target.value)}
-                  required 
+                  required
                 />
               </div>
             )}
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={loading}
               className="w-full py-3 bg-blue-700 text-white rounded-xl font-bold hover:bg-blue-800 transition-all"
             >
@@ -120,57 +119,53 @@ function RecoveryModal({ isOpen, onClose }) {
 }
 
 export default function Login() {
-  const [view, setView] = useState('login'); 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // ← agregado
   const [isRecoveryOpen, setIsRecoveryOpen] = useState(false);
-  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [code, setCode] = useState('');
-  const [regData, setRegData] = useState({ name: '', lastName: '', DUI: '', birthDate: '' });
+  const navigate = useNavigate();
+  const { login } = useAuth(); // ← ahora sí se consume el contexto
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true); // ← agregado
     try {
-        await AuthService.login(email, password);
-        alert("¡Bienvenido!");
-        navigate("/dashboard");
+      await login(email, password); // ← usa el login del contexto, no directo del servicio
+      navigate("/dashboard");
     } catch (error) {
-        alert("Credenciales incorrectas: " + error.message);
+      alert("Credenciales incorrectas: " + error.message);
+    } finally {
+      setLoading(false); // ← agregado
     }
-};
-
-const handleLoginToDashboard = () =>{
-    alert("Bienvenido")
-    navigate("/dashboard")
-}
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
       <div className="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md border border-slate-100">
-        {view === 'login' && (
-          <form onSubmit={handleLoginToDashboard} className="space-y-5">
-            <h2 className="text-3xl font-black text-slate-800">Bienvenido</h2>
-            <p className="text-slate-500 text-sm">Ingresa tus credenciales para continuar.</p>
-            <input type="email" placeholder="Correo" className="w-full p-3 bg-slate-50 border rounded-xl outline-none" onChange={e => setEmail(e.target.value)} required />
-            <input type="password" placeholder="Contraseña" className="w-full p-3 bg-slate-50 border rounded-xl outline-none" onChange={e => setPassword(e.target.value)} required />
-            
-            <button 
-              type="button"
-              onClick={() => setIsRecoveryOpen(true)}
-              className="text-xs text-blue-600 font-bold hover:underline block"
-            >
-              ¿Olvidaste tu contraseña?
-            </button>
+        <form onSubmit={handleLogin} className="space-y-5"> {/* ← handleLogin real */}
+          <h2 className="text-3xl font-black text-slate-800">Bienvenido</h2>
+          <p className="text-slate-500 text-sm">Ingresa tus credenciales para continuar.</p>
+          <input type="email" placeholder="Correo" className="w-full p-3 bg-slate-50 border rounded-xl outline-none" onChange={e => setEmail(e.target.value)} required />
+          <input type="password" placeholder="Contraseña" className="w-full p-3 bg-slate-50 border rounded-xl outline-none" onChange={e => setPassword(e.target.value)} required />
 
-            <button type="submit" className="w-full py-3 bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-200">Entrar</button>
-          </form>
-        )}
+          <button
+            type="button"
+            onClick={() => setIsRecoveryOpen(true)}
+            className="text-xs text-blue-600 font-bold hover:underline block"
+          >
+            ¿Olvidaste tu contraseña?
+          </button>
 
+          {/* ← solo se agregó disabled y el texto de carga */}
+          <button type="submit" disabled={loading} className="w-full py-3 bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-200">
+            {loading ? "Ingresando..." : "Entrar"}
+          </button>
+        </form>
       </div>
-      <RecoveryModal 
-        isOpen={isRecoveryOpen} 
-        onClose={() => setIsRecoveryOpen(false)} 
+
+      <RecoveryModal
+        isOpen={isRecoveryOpen}
+        onClose={() => setIsRecoveryOpen(false)}
       />
     </div>
   );

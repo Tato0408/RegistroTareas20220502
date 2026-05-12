@@ -1,5 +1,6 @@
 import studentsModel from "../../models/students.js";
 import crypto from "crypto";
+import bcrypt from 'bcrypt'
 import { config } from "../../../config.js";
 import jsonwebtoken from "jsonwebtoken";
 const recoveryPasswordStudentController = {};
@@ -56,20 +57,30 @@ recoveryPasswordStudentController.verifyCode = async (req, res) => {
     const newToken = jsonwebtoken.sign(
       { email: decode.email, userType: "Student", verified: true },
       config.JWT.secret,
-      {expiresIn: "15m"}
+      { expiresIn: "15m" },
     );
-    res.cookie("recoveryCookie", newToken, {maxAge: 15*60*1000})
-    return res.status(200).json({message: "Valid code"})
+    res.cookie("recoveryCookie", newToken, { maxAge: 15 * 60 * 1000 });
+    return res.status(200).json({ message: "Valid code" });
   } catch (error) {
     console.log("ERROR: ", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
 
-recoveryPasswordStudentController.newPassword= async(req,res) =>{
-    try {
-        const {password, newPassword} = req.body;
-    } catch (error) {
-        
-    }
-}
+recoveryPasswordStudentController.newPassword = async (req, res) => {
+  try {
+    const { password, newPassword } = req.body;
+    if (password !== newPassword)
+      return res.status(400).json({ message: "Laas contraseñas deben ser iguales " });
+    const token = req.cookies.recoveryCokie;
+    const decode = jsonwebtoken.verify(token, config.JWT.secret);
+    if(!decode.verified) return res.status(400).json({message: "Code not verified"})
+    const passwordHashed = await bcrypt.hash(newPassword, 10)
+    await studentsModel.findOneAndUpdate({email: decode.email}, {password: passwordHashed})
+    res.clearCookie("recoveryCookie")
+    return res.status(200).json({message: "Password good"})
+  } catch (error) {
+    console.log("ERROR: ", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};

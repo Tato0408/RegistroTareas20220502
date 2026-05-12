@@ -1,13 +1,13 @@
 import mongoose, {Schema, model} from 'mongoose'
 
-const studentsSchema = new Schema({
-    namestudent: {type: String},
+const teachersSchema = new Schema({
+    nameTeacher: {type: String},
     lastName: {type: String},
     email: {type: String},
     password: {type: String},
-    bithDate: {type: Date},
     phone: {type: String},
-    grade: {type: String},
+    speciality: {type: String},
+    isActive: {type: Boolean},
     isVerified: {type: Boolean},
     loginAttemps: {type: Number},
     timeOut: {type: Boolean}
@@ -16,4 +16,4 @@ const studentsSchema = new Schema({
     strict: false
 });
 
-export default model ("Students", studentsSchema)
+export default model ("Teachers", teachersSchema)

@@ -1,19 +1,19 @@
-import studentsModel from "../../models/students.js";
+import teacherModel from "../../models/teachers.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import nodemailer from 'nodemailer'
 import { config } from "../../../config.js";
 import jsonwebtoken from "jsonwebtoken";
-const recoveryPasswordStudentController = {};
+const recoveryPasswordTeacherController = {};
 
-recoveryPasswordStudentController.requestCode = async (req, res) => {
+recoveryPasswordTeacherController.requestCode = async (req, res) => {
   try {
     const { email } = req.body;
-    const userFound = await studentsModel.findOne({ email });
+    const userFound = await teacherModel.findOne({ email });
     if (!userFound) return res.status(400).json({ message: "User not found" });
     const randomCode = crypto.randomBytes(3).toString("hex");
     const token = jsonwebtoken.sign(
-      { email, randomCode, userType: "Student", verified: false },
+      { email, randomCode, userType: "Teacher", verified: false },
       config.JWT.secret,
       { expiresIn: "15m" },
     );
@@ -47,7 +47,7 @@ recoveryPasswordStudentController.requestCode = async (req, res) => {
   }
 };
 
-recoveryPasswordStudentController.verifyCode = async (req, res) => {
+recoveryPasswordTeacherController.verifyCode = async (req, res) => {
   try {
     const { code } = req.body;
     const token = req.cookies.recoveryCookie;
@@ -56,7 +56,7 @@ recoveryPasswordStudentController.verifyCode = async (req, res) => {
     if (code !== decode.randomCode)
       return res.satus(400).json({ message: "Invalid code" });
     const newToken = jsonwebtoken.sign(
-      { email: decode.email, userType: "Student", verified: true },
+      { email: decode.email, userType: "Teacher", verified: true },
       config.JWT.secret,
       { expiresIn: "15m" },
     );
@@ -68,7 +68,7 @@ recoveryPasswordStudentController.verifyCode = async (req, res) => {
   }
 };
 
-recoveryPasswordStudentController.newPassword = async (req, res) => {
+recoveryPasswordTeacherController.newPassword = async (req, res) => {
   try {
     const { password, newPassword } = req.body;
     if (password !== newPassword)
@@ -80,7 +80,7 @@ recoveryPasswordStudentController.newPassword = async (req, res) => {
     if (!decode.verified)
       return res.status(400).json({ message: "Code not verified" });
     const passwordHashed = await bcrypt.hash(newPassword, 10);
-    await studentsModel.findOneAndUpdate(
+    await teacherModel.findOneAndUpdate(
       { email: decode.email },
       { password: passwordHashed },
     );
@@ -92,4 +92,4 @@ recoveryPasswordStudentController.newPassword = async (req, res) => {
   }
 };
 
-export default recoveryPasswordStudentController;
+export default recoveryPasswordTeacherController;

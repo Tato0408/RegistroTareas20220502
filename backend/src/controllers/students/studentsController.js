@@ -14,7 +14,7 @@ studentsController.getStudents = async (req, res) => {
 studentsController.updateStudents = async (req, res) => {
   try {
     let {
-      name,
+      namestudent,
       lastName,
       email,
       password,
@@ -26,17 +26,17 @@ studentsController.updateStudents = async (req, res) => {
       timeOut,
     } = req.body;
 
-    name = name?.trim();
+    namestudent = namestudent?.trim();
     lastName = lastName?.trim();
     email = email?.trim();
     password = password?.trim();
 
-    if(!name || !lastName || !email || password){
+    if(!namestudent || !lastName){
         return res.status(400).json({message: "Ningún campo debe estar vacio"})
     }
 
     const payload = await studentsModel.findByIdAndUpdate(req.params.id, {
-        name,
+        namestudent,
       lastName,
       email,
       password,

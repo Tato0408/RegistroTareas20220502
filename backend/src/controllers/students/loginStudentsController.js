@@ -13,7 +13,9 @@ loginStudentrsController.login = async (req, res) => {
     if (payload.timeOut && payload.timeOut > Date.now())
       return res.status(400).json({ message: "Account bloqued" });
     const isMatch = await bcrypt.compare(password, payload.password);
-    if (!isMatch) {
+    console.log(isMatch)
+    if (!isMatch) { 
+      console.log(payload.loginAttemps)
       payload.loginAttemps = (payload.loginAttemps || 0) + 1;
       if (payload.loginAttemps >= 5) {
         payload.timeOut = Date.now() + 15 * 60 * 1000;
@@ -21,6 +23,7 @@ loginStudentrsController.login = async (req, res) => {
         await payload.save();
         return res.status(400).json({ message: "Cuenta bloqueada" });
       }
+      return res.status(400).json({message :"Invalid password"})
     }
     payload.loginAttemps = 0;
     payload.timeOut = 0;

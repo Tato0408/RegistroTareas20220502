@@ -1,52 +1,52 @@
-import studentsModel from "../../models/students.js";
+import teacherModel from "../../models/teachers.js";
 import bcrypt from "bcrypt";
 import jsonwebtoken from "jsonwebtoken";
 import { config } from "../../../config.js";
 import crypto from "crypto";
 import * as nodemailer from "nodemailer";
 
-const registerStudentsController = {};
+const registerTeacherController = {};
 
-registerStudentsController.insertStudent = async (req, res) => {
+registerTeacherController.insertTeacher = async (req, res) => {
   try {
     let {
-      namestudent,
-      lastName,
-      email,
-      password,
-      bithDate,
-      phone,
-      grade,
-      isVerified,
-      loginAttemps,
-      timeOut,
+       nameTeacher,
+        lastName,
+        email,
+        password,
+        phone,
+        speciality,
+        isActive,
+        isVerified,
+        loginAttemps,
+        timeOut,
     } = req.body;
 
-    namestudent = namestudent?.trim();
+    nameTeacher = nameTeacher?.trim();
     lastName = lastName?.trim();
     email = email?.trim();
     password = password?.trim();
 
-    if (!namestudent || !lastName) {
+    if (!nameTeacher || !lastName) {
       return res.status(400).json({ message: "Ningún campo debe estar vacio" });
     }
 
-    const existStudent = await studentsModel.findOne({ email });
-    if (existStudent)
-      return res.status(400).json({ message: "Student alredy exist" });
+    const existeTeacher = await teacherModel.findOne({ email });
+    if (existeTeacher)
+      return res.status(400).json({ message: "Teacher alredy exist" });
 
     const passwordHashed = await bcrypt.hash(password, 10);
     const randomCode = crypto.randomBytes(3).toString("hex");
     const token = jsonwebtoken.sign(
       {
         randomCode,
-        namestudent,
+        nameTeacher,
         lastName,
         email,
         password: passwordHashed,
-        bithDate,
         phone,
-        grade,
+        speciality,
+        isActive,
         isVerified,
         loginAttemps,
         timeOut,
@@ -79,55 +79,54 @@ registerStudentsController.insertStudent = async (req, res) => {
         console.log("ERROR: ", error);
         return res.status(500).json({ message: "Error sending email" });
       }
-      
+
       return res.status(200).json({ message: "Email sent" });
     });
-
   } catch (error) {
     console.log("ERROR: ", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
 
-registerStudentsController.verifyCodeInsert = async (req, res) => {
+registerTeacherController.verifyCodeInsert = async (req, res) => {
   try {
     const { verifyCodeRequest } = req.body;
     const token = req.cookies.registrationCookie;
     const decode = jsonwebtoken.verify(token, config.JWT.secret);
-    const { randomCode : storedCode,
-            namestudent,
-      lastName,
-      email,
-      password,
-      bithDate,
-      phone,
-      grade,
-      isVerified,
-      loginAttemps,
-      timeOut
+    const {
+      randomCode: storedCode,
+      nameTeacher,
+        lastName,
+        email,
+        password,
+        phone,
+        speciality,
+        isActive,
+        isVerified,
+        loginAttemps,
+        timeOut,
     } = decode;
 
     if (verifyCodeRequest !== storedCode)
       return res.status(400).json({ message: "Invalid Code" });
-    const payload = new studentsModel({
-      namestudent,
-      lastName,
-      email,
-      password,
-      bithDate,
-      phone,
-      grade,
-      isVerified,
-      loginAttemps,
-      timeOut,
+    const payload = new teacherModel({
+      nameTeacher,
+        lastName,
+        email,
+        password,
+        phone,
+        speciality,
+        isActive,
+        isVerified,
+        loginAttemps,
+        timeOut,
     });
     await payload.save();
-    return res.status(200).json({message:"Data save"})
+    return res.status(200).json({ message: "Data save" });
   } catch (error) {
-    
     console.log("ERROR: ", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
 
-export default registerStudentsController;
+export default registerTeacherController;

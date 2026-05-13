@@ -3,7 +3,7 @@ import { APIURL as API_URL } from "../utils/api_url";
 // GET - Obtener todas las tareas
 export async function getAllTasks() {
     try {
-        const response = await fetch(`${API_URL}task`, {
+        const response = await fetch(`${API_URL}tasks`, {
             credentials: "include"
         });
         if (!response.ok) throw new Error("Error al obtener tareas");
@@ -17,7 +17,7 @@ export async function getAllTasks() {
 // POST - Crear tarea
 export async function createTask(taskData) {
     try {
-        const response = await fetch(`${API_URL}task`, {
+        const response = await fetch(`${API_URL}tasks`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(taskData),
@@ -35,7 +35,7 @@ export async function createTask(taskData) {
 // DELETE - Eliminar tarea
 export async function deleteTask(taskId) {
     try {
-        const response = await fetch(`${API_URL}task/${taskId}`, {
+        const response = await fetch(`${API_URL}tasks/${taskId}`, {
             method: 'DELETE',
             credentials: "include"
         });
@@ -51,7 +51,7 @@ export async function deleteTask(taskId) {
 // PUT - Actualizar tarea
 export async function updateTask(taskId, taskData) {
     try {
-        const response = await fetch(`${API_URL}task/${taskId}`, {
+        const response = await fetch(`${API_URL}tasks/${taskId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(taskData),

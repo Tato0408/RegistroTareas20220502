@@ -143,7 +143,7 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
       <div className="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md border border-slate-100">
         <form onSubmit={handleLogin} className="space-y-5"> {/* ← handleLogin real */}
-          <h2 className="text-3xl font-black text-slate-800">Bienvenido</h2>
+          <h2 className="text-3xl font-black text-blue-700">Bienvenido</h2>
           <p className="text-slate-500 text-sm">Ingresa tus credenciales para continuar.</p>
           <input type="email" placeholder="Correo" className="w-full p-3 bg-slate-50 border rounded-xl outline-none" onChange={e => setEmail(e.target.value)} required />
           <input type="password" placeholder="Contraseña" className="w-full p-3 bg-slate-50 border rounded-xl outline-none" onChange={e => setPassword(e.target.value)} required />

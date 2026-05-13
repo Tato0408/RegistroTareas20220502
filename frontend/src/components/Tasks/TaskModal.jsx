@@ -5,12 +5,11 @@ export function TaskModal({ isOpen, onClose, taskToEdit = null }) {
   const { createTask, updateTask } = useTask();
 
   const emptyForm = {
-    taskName: '',
-    topicName: '',
+    tittle: '',       // ← cambiado de taskName
+    description: '',
     dueDate: '',
-    state: false,
+    status: false,    // ← cambiado de state
     priority: 'Media',
-    description: ''
   };
 
   const [formData, setFormData] = useState(emptyForm);
@@ -52,22 +51,13 @@ export function TaskModal({ isOpen, onClose, taskToEdit = null }) {
             {taskToEdit ? 'Editar Tarea' : 'Registrar Tarea'}
           </h2>
 
-          <div className="grid grid-cols-2 gap-4">
-            <input
-              value={formData.taskName}
-              placeholder="Título"
-              className="p-3 border rounded-xl"
-              onChange={(e) => setFormData({ ...formData, taskName: e.target.value })}
-              required
-            />
-            <input
-              value={formData.topicName}
-              placeholder="Materia"
-              className="p-3 border rounded-xl"
-              onChange={(e) => setFormData({ ...formData, topicName: e.target.value })}
-              required
-            />
-          </div>
+          <input
+            value={formData.tittle}
+            placeholder="Título"
+            className="w-full p-3 border rounded-xl"
+            onChange={(e) => setFormData({ ...formData, tittle: e.target.value })} // ← cambiado
+            required
+          />
 
           <input
             type="date"
@@ -86,7 +76,6 @@ export function TaskModal({ isOpen, onClose, taskToEdit = null }) {
           />
 
           <div className="grid grid-cols-2 gap-4">
-            {/* Prioridad */}
             <select
               value={formData.priority}
               className="p-3 border rounded-xl bg-white"
@@ -99,11 +88,10 @@ export function TaskModal({ isOpen, onClose, taskToEdit = null }) {
               <option value="Alta">Alta</option>
             </select>
 
-            {/* Estado */}
             <select
-              value={formData.state}
+              value={formData.status}
               className="p-3 border rounded-xl bg-white"
-              onChange={(e) => setFormData({ ...formData, state: e.target.value === 'true' })}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value === 'true' })}
             >
               <option value="false">Pendiente</option>
               <option value="true">Completada</option>

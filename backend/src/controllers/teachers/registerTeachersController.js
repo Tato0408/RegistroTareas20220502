@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jsonwebtoken from "jsonwebtoken";
 import { config } from "../../../config.js";
 import crypto from "crypto";
-import * as nodemailer from "nodemailer";
+import nodemailer from "nodemailer";
 
 const registerTeacherController = {};
 

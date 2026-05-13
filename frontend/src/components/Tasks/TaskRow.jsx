@@ -10,15 +10,15 @@ export default function TaskRow({ data, onEdit, onDelete }) {
   return (
     <tr className="hover:bg-slate-50/80 transition-colors">
       <td className="p-4 text-center">
-        <p className="font-bold text-slate-700">{data.taskName}</p>
+        <p className="font-bold text-slate-700">{data.tittle}</p> {/* ← cambiado */}
       </td>
-      <td className="p-4 text-slate-600 text-center">{data.topicName}</td>
       <td className="p-4 text-slate-600 text-center">
         {data.dueDate ? data.dueDate.split('T')[0] : '—'}
       </td>
+      <td className="p-4 text-slate-600 text-center">{data.description}</td>
       <td className="p-4 text-center">
-        <span className={`px-3 py-1 rounded-full text-xs font-bold ${data.state ? 'bg-blue-100 text-blue-600' : 'bg-red-100 text-red-600'}`}>
-          {data.state ? 'Completada' : 'Pendiente'}
+        <span className={`px-3 py-1 rounded-full text-xs font-bold ${data.status ? 'bg-blue-100 text-blue-600' : 'bg-red-100 text-red-600'}`}> {/* ← cambiado */}
+          {data.status ? 'Completada' : 'Pendiente'} {/* ← cambiado */}
         </span>
       </td>
       <td className="p-4 text-center">

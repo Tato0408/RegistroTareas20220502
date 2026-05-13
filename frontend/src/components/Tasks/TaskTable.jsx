@@ -10,8 +10,8 @@ export function TaskTable({ tasks = [], onEditRow }) {
         <thead className="bg-slate-50 border-b border-slate-200">
           <tr>
             <th className="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Título</th>
-            <th className="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Materia</th>
             <th className="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Fecha de entrega</th>
+            <th className="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Descripción</th>
             <th className="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Estado</th>
             <th className="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Prioridad</th>
             <th className="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Acciones</th>
@@ -21,7 +21,7 @@ export function TaskTable({ tasks = [], onEditRow }) {
           {tasks.map((data) => (
             <TaskRow
               key={data._id}
-              data={data}           // ← prop unificado como "data"
+              data={data}
               onEdit={onEditRow}
               onDelete={() => deleteTask(data._id)}
             />

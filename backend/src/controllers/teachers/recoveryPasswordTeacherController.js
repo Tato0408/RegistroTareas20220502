@@ -54,7 +54,7 @@ recoveryPasswordTeacherController.verifyCode = async (req, res) => {
     const decode = jsonwebtoken.verify(token, config.JWT.secret);
 
     if (code !== decode.randomCode)
-      return res.satus(400).json({ message: "Invalid code" });
+      return res.status(400).json({ message: "Invalid code" });
     const newToken = jsonwebtoken.sign(
       { email: decode.email, userType: "Teacher", verified: true },
       config.JWT.secret,

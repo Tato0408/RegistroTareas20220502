@@ -1,7 +1,7 @@
 import { APIURL as API_URL } from "../utils/api_url";
 
 export async function login(email, password) {
-    const response = await fetch(`${API_URL}loginUser`, {
+    const response = await fetch(`${API_URL}loginTeachers`, { // ← cambiado
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -9,7 +9,6 @@ export async function login(email, password) {
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.message || "Error en el login");
-    alert("login exitoso")
     return data;
 }
 
@@ -32,7 +31,7 @@ export async function getMe() {
 }
 
 export async function requestCode(email) {
-    const response = await fetch(`${API_URL}recoveryPassword/requestCode`, { // ← corregido
+    const response = await fetch(`${API_URL}recoveryPasswordTeachers/requestCode`, { // ← cambiado
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -44,7 +43,7 @@ export async function requestCode(email) {
 }
 
 export async function verifyCode(code) {
-    const response = await fetch(`${API_URL}recoveryPassword/verifyCode`, { // ← corregido
+    const response = await fetch(`${API_URL}recoveryPasswordTeachers/verifyCode`, { // ← cambiado
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code }),
@@ -56,10 +55,10 @@ export async function verifyCode(code) {
 }
 
 export async function updatePassword(newPassword, confirmedPassword) {
-    const response = await fetch(`${API_URL}recoveryPassword/newPassword`, { // ← corregido
+    const response = await fetch(`${API_URL}recoveryPasswordTeachers/newPassword`, { // ← cambiado
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ newPassword, confirmedPassword }),
+        body: JSON.stringify({ password: newPassword, newPassword: confirmedPassword }), // ← cambiado
         credentials: "include"
     });
     const data = await response.json();
